@@ -112,7 +112,7 @@ export async function createProject(orgId: string, formData: FormData) {
       org_id: orgId,
       name: validation.data.name,
       description: validation.data.description,
-      status: validation.data.status,
+      status: validation.data.status as 'planning' | 'active' | 'on_hold' | 'completed' | 'cancelled',
       start_date: validation.data.startDate,
       end_date: validation.data.endDate,
       budget: validation.data.budget,

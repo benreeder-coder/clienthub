@@ -4,8 +4,8 @@ export const taskStatusEnum = z.enum([
   'todo',
   'in_progress',
   'review',
-  'completed',
-  'cancelled',
+  'done',
+  'archived',
 ])
 
 export const taskPriorityEnum = z.enum([
@@ -23,7 +23,6 @@ export const createTaskSchema = z.object({
   projectId: z.string().uuid().optional(),
   assignedTo: z.string().uuid().optional(),
   dueDate: z.string().optional(),
-  estimatedHours: z.coerce.number().positive().optional(),
 })
 
 export const updateTaskSchema = createTaskSchema.partial()
@@ -44,8 +43,8 @@ export const TASK_STATUS_LABELS: Record<TaskStatus, string> = {
   todo: 'To Do',
   in_progress: 'In Progress',
   review: 'Review',
-  completed: 'Completed',
-  cancelled: 'Cancelled',
+  done: 'Done',
+  archived: 'Archived',
 }
 
 export const TASK_PRIORITY_LABELS: Record<TaskPriority, string> = {

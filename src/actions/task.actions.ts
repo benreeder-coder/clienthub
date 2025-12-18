@@ -32,7 +32,7 @@ export async function getTasks(orgId: string, projectId?: string) {
       )
     `)
     .eq('org_id', orgId)
-    .order('position', { ascending: true })
+    .order('sort_order', { ascending: true })
     .order('created_at', { ascending: false })
 
   if (projectId) {
@@ -109,7 +109,6 @@ export async function createTask(orgId: string, formData: FormData) {
     projectId: formData.get('projectId') || undefined,
     assignedTo: formData.get('assignedTo') || undefined,
     dueDate: formData.get('dueDate') || undefined,
-    estimatedHours: formData.get('estimatedHours') || undefined,
   }
 
   const validation = createTaskSchema.safeParse(rawData)
@@ -123,17 +122,17 @@ export async function createTask(orgId: string, formData: FormData) {
 
   const supabase = await createClient()
 
-  // Get the max position for this status
+  // Get the max sort_order for this status
   const { data: maxPosResult } = await supabase
     .from('tasks')
-    .select('position')
+    .select('sort_order')
     .eq('org_id', orgId)
     .eq('status', validation.data.status)
-    .order('position', { ascending: false })
+    .order('sort_order', { ascending: false })
     .limit(1)
     .single()
 
-  const newPosition = (maxPosResult?.position ?? -1) + 1
+  const newSortOrder = (maxPosResult?.sort_order ?? -1) + 1
 
   const { data, error } = await supabase
     .from('tasks')
@@ -141,14 +140,13 @@ export async function createTask(orgId: string, formData: FormData) {
       org_id: orgId,
       title: validation.data.title,
       description: validation.data.description,
-      status: validation.data.status,
-      priority: validation.data.priority,
+      status: validation.data.status as 'todo' | 'in_progress' | 'review' | 'done' | 'archived',
+      priority: validation.data.priority as 'low' | 'medium' | 'high' | 'urgent',
       project_id: validation.data.projectId,
       assigned_to: validation.data.assignedTo,
       due_date: validation.data.dueDate,
-      estimated_hours: validation.data.estimatedHours,
       created_by: accessResult.data.userId,
-      position: newPosition,
+      sort_order: newSortOrder,
     })
     .select()
     .single()
@@ -183,7 +181,6 @@ export async function updateTask(
     projectId: formData.get('projectId') || undefined,
     assignedTo: formData.get('assignedTo') || undefined,
     dueDate: formData.get('dueDate') || undefined,
-    estimatedHours: formData.get('estimatedHours') || undefined,
   }
 
   // Filter out undefined values
@@ -210,7 +207,6 @@ export async function updateTask(
   if (validation.data.projectId !== undefined) updateData.project_id = validation.data.projectId
   if (validation.data.assignedTo !== undefined) updateData.assigned_to = validation.data.assignedTo
   if (validation.data.dueDate !== undefined) updateData.due_date = validation.data.dueDate
-  if (validation.data.estimatedHours !== undefined) updateData.estimated_hours = validation.data.estimatedHours
 
   const { data, error } = await supabase
     .from('tasks')
@@ -257,7 +253,7 @@ export async function moveTask(orgId: string, data: {
   // Get current task
   const { data: currentTask, error: fetchError } = await supabase
     .from('tasks')
-    .select('status, position')
+    .select('status, sort_order')
     .eq('id', validation.data.taskId)
     .eq('org_id', orgId)
     .single()
@@ -266,8 +262,8 @@ export async function moveTask(orgId: string, data: {
     return { error: 'Task not found', code: 'NOT_FOUND' }
   }
 
-  const newStatus = validation.data.status
-  const newPosition = validation.data.position ?? 0
+  const newStatus = validation.data.status as 'todo' | 'in_progress' | 'review' | 'done' | 'archived'
+  const newSortOrder = validation.data.position ?? 0
 
   // If moving to a different status, reorder both columns
   if (currentTask.status !== newStatus) {
@@ -275,22 +271,22 @@ export async function moveTask(orgId: string, data: {
     await supabase.rpc('reorder_tasks_after_remove', {
       p_org_id: orgId,
       p_status: currentTask.status,
-      p_old_position: currentTask.position,
+      p_old_position: currentTask.sort_order,
     })
 
     // Increment positions in new column for items at or after new position
     await supabase.rpc('reorder_tasks_before_insert', {
       p_org_id: orgId,
       p_status: newStatus,
-      p_new_position: newPosition,
+      p_new_position: newSortOrder,
     })
   } else {
     // Same column, just reorder
     await supabase.rpc('reorder_tasks_same_column', {
       p_org_id: orgId,
       p_status: newStatus,
-      p_old_position: currentTask.position,
-      p_new_position: newPosition,
+      p_old_position: currentTask.sort_order,
+      p_new_position: newSortOrder,
     })
   }
 
@@ -299,7 +295,7 @@ export async function moveTask(orgId: string, data: {
     .from('tasks')
     .update({
       status: newStatus,
-      position: newPosition,
+      sort_order: newSortOrder,
     })
     .eq('id', validation.data.taskId)
     .eq('org_id', orgId)
