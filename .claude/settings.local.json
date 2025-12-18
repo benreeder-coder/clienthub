@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit: ClientHub multi-tenant client portal\n\nFeatures:\n- Multi-tenant architecture with org isolation\n- Template-driven module system \\(enabled/locked/hidden\\)\n- Role-based access control \\(RBAC\\)\n- Row-level security \\(RLS\\) policies\n- Tasks with kanban board\n- Admin dashboard with dual task views\n- PandaDoc webhook integration\n- Resend email integration\n- Event-driven onboarding system\n- Dark cyber theme UI\n\nTech stack: Next.js 14, TypeScript, Tailwind, shadcn/ui, Supabase, TanStack Query\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit:*)"
     ]
   }
 }

@@ -449,7 +449,7 @@ CREATE POLICY "Super admins can view all organizations"
 CREATE POLICY "Users can view their organizations"
   ON organizations FOR SELECT
   TO authenticated
-  USING (id = ANY((SELECT public.get_user_org_ids())));
+  USING (id = ANY(public.get_user_org_ids()));
 
 CREATE POLICY "Super admins can create organizations"
   ON organizations FOR INSERT
@@ -486,7 +486,7 @@ CREATE POLICY "Users can view org member profiles"
   USING (
     id IN (
       SELECT om.user_id FROM org_memberships om
-      WHERE om.org_id = ANY((SELECT public.get_user_org_ids()))
+      WHERE om.org_id = ANY(public.get_user_org_ids())
     )
   );
 
@@ -513,7 +513,7 @@ CREATE POLICY "Super admins can update any profile"
 CREATE POLICY "Users can view org memberships"
   ON org_memberships FOR SELECT
   TO authenticated
-  USING (org_id = ANY((SELECT public.get_user_org_ids())));
+  USING (org_id = ANY(public.get_user_org_ids()));
 
 CREATE POLICY "Super admins can view all memberships"
   ON org_memberships FOR SELECT
@@ -572,7 +572,7 @@ CREATE POLICY "Super admins can manage template modules"
 CREATE POLICY "Users can view their org template assignments"
   ON org_template_assignments FOR SELECT
   TO authenticated
-  USING (org_id = ANY((SELECT public.get_user_org_ids())));
+  USING (org_id = ANY(public.get_user_org_ids()));
 
 CREATE POLICY "Super admins can view all assignments"
   ON org_template_assignments FOR SELECT
@@ -591,7 +591,7 @@ CREATE POLICY "Super admins can manage template assignments"
 CREATE POLICY "Users can view their org modules"
   ON org_modules FOR SELECT
   TO authenticated
-  USING (org_id = ANY((SELECT public.get_user_org_ids())));
+  USING (org_id = ANY(public.get_user_org_ids()));
 
 CREATE POLICY "Super admins can view all org modules"
   ON org_modules FOR SELECT
@@ -611,7 +611,7 @@ CREATE POLICY "Users can view org projects"
   ON projects FOR SELECT
   TO authenticated
   USING (
-    (org_id = ANY((SELECT public.get_user_org_ids()))
+    (org_id = ANY(public.get_user_org_ids())
      AND (SELECT public.is_module_enabled(org_id, 'projects')))
     OR (SELECT public.is_super_admin())
   );
@@ -649,7 +649,7 @@ CREATE POLICY "Users can view org tasks"
   ON tasks FOR SELECT
   TO authenticated
   USING (
-    (org_id = ANY((SELECT public.get_user_org_ids()))
+    (org_id = ANY(public.get_user_org_ids())
      AND (SELECT public.is_module_enabled(org_id, 'tasks')))
     OR (SELECT public.is_super_admin())
   );
@@ -687,7 +687,7 @@ CREATE POLICY "Users can view org workflows"
   ON workflows FOR SELECT
   TO authenticated
   USING (
-    (org_id = ANY((SELECT public.get_user_org_ids()))
+    (org_id = ANY(public.get_user_org_ids())
      AND (SELECT public.is_module_enabled(org_id, 'workflows')))
     OR (SELECT public.is_super_admin())
   );
@@ -710,7 +710,7 @@ CREATE POLICY "Users can view workflow steps"
       SELECT 1 FROM workflows w
       WHERE w.id = workflow_id
       AND (
-        (w.org_id = ANY((SELECT public.get_user_org_ids()))
+        (w.org_id = ANY(public.get_user_org_ids())
          AND (SELECT public.is_module_enabled(w.org_id, 'workflows')))
         OR (SELECT public.is_super_admin())
       )
@@ -725,7 +725,7 @@ CREATE POLICY "Users can view org outreach campaigns"
   ON outreach_campaigns FOR SELECT
   TO authenticated
   USING (
-    (org_id = ANY((SELECT public.get_user_org_ids()))
+    (org_id = ANY(public.get_user_org_ids())
      AND (SELECT public.is_module_enabled(org_id, 'outreach')))
     OR (SELECT public.is_super_admin())
   );
@@ -747,7 +747,7 @@ CREATE POLICY "Users can view org documents"
   ON documents FOR SELECT
   TO authenticated
   USING (
-    (org_id = ANY((SELECT public.get_user_org_ids()))
+    (org_id = ANY(public.get_user_org_ids())
      AND (SELECT public.is_module_enabled(org_id, 'documents')))
     OR (SELECT public.is_super_admin())
   );
@@ -785,7 +785,7 @@ CREATE POLICY "Users can view their org onboarding"
   ON onboarding_workflows FOR SELECT
   TO authenticated
   USING (
-    org_id = ANY((SELECT public.get_user_org_ids()))
+    org_id = ANY(public.get_user_org_ids())
     OR (SELECT public.is_super_admin())
   );
 
@@ -801,7 +801,7 @@ CREATE POLICY "Users can view onboarding events"
   ON onboarding_events FOR SELECT
   TO authenticated
   USING (
-    org_id = ANY((SELECT public.get_user_org_ids()))
+    org_id = ANY(public.get_user_org_ids())
     OR (SELECT public.is_super_admin())
   );
 
