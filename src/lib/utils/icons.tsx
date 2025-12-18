@@ -34,3 +34,6 @@ const iconMap: Record<string, LucideIcon> = {
 export function getIconComponent(iconName: string): LucideIcon {
   return iconMap[iconName] || Home
 }
+
+// Alias for compatibility
+export const getModuleIcon = getIconComponent
