@@ -218,7 +218,7 @@ export default async function AdminOrganizationDetailPage({ params }: PageProps)
                 <div className="space-y-2">
                   <p className="text-sm font-medium">Available Templates:</p>
                   <div className="grid gap-2">
-                    {templates.map((t) => (
+                    {templates.map((t: { id: string; name: string; description: string | null }) => (
                       <button
                         key={t.id}
                         className="flex items-center justify-between p-3 rounded-lg border border-border/50 hover:bg-accent/50 hover:border-primary/30 transition-all text-left"
