@@ -92,7 +92,6 @@ export async function createProject(orgId: string, formData: FormData) {
     status: formData.get('status') || 'planning',
     startDate: formData.get('startDate') || undefined,
     endDate: formData.get('endDate') || undefined,
-    budget: formData.get('budget') || undefined,
   }
 
   const validation = createProjectSchema.safeParse(rawData)
@@ -115,7 +114,6 @@ export async function createProject(orgId: string, formData: FormData) {
       status: validation.data.status as 'planning' | 'active' | 'on_hold' | 'completed' | 'cancelled',
       start_date: validation.data.startDate,
       end_date: validation.data.endDate,
-      budget: validation.data.budget,
       created_by: accessResult.data.userId,
     })
     .select()
@@ -149,7 +147,6 @@ export async function updateProject(
     status: formData.get('status') || undefined,
     startDate: formData.get('startDate') || undefined,
     endDate: formData.get('endDate') || undefined,
-    budget: formData.get('budget') || undefined,
   }
 
   // Filter out undefined values

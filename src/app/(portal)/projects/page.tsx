@@ -5,7 +5,7 @@ import { getProjects } from '@/actions/project.actions'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Plus, FolderKanban, Calendar, DollarSign } from 'lucide-react'
+import { Plus, FolderKanban, Calendar } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = {
@@ -92,12 +92,6 @@ export default async function ProjectsPage() {
                       <div className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
                         {new Date(project.start_date).toLocaleDateString()}
-                      </div>
-                    )}
-                    {project.budget && (
-                      <div className="flex items-center gap-1">
-                        <DollarSign className="h-3 w-3" />
-                        {project.budget.toLocaleString()}
                       </div>
                     )}
                   </div>
