@@ -29,7 +29,7 @@ export default async function TasksPage() {
       )
     `)
     .eq('org_id', orgId)
-    .order('position', { ascending: true })
+    .order('sort_order', { ascending: true })
     .order('created_at', { ascending: false })
 
   if (tasksError) {
