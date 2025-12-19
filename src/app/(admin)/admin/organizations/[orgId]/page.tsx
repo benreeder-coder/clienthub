@@ -46,7 +46,8 @@ export default async function AdminOrganizationDetailPage({ params }: PageProps)
   const supabase = await createClient()
 
   // Fetch organization with related data
-  const { data: org, error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: org, error } = await (supabase as any)
     .from('organizations')
     .select(`
       *,
@@ -90,16 +91,18 @@ export default async function AdminOrganizationDetailPage({ params }: PageProps)
   }
 
   // Fetch all templates for dropdown
-  const { data: templates } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: templates } = await (supabase as any)
     .from('workspace_templates')
     .select('id, name, description')
     .eq('is_active', true)
     .order('name')
 
-  const assignment = org.org_template_assignments?.[0]
+  const typedOrg = org as any
+  const assignment = typedOrg.org_template_assignments?.[0]
   const template = assignment?.workspace_templates
   const templateModules = template?.template_modules || []
-  const orgOverrides = org.org_modules || []
+  const orgOverrides = typedOrg.org_modules || []
 
   // Build effective module states
   const moduleStates = MODULE_REGISTRY.map((mod) => {
@@ -117,9 +120,9 @@ export default async function AdminOrganizationDetailPage({ params }: PageProps)
     }
   })
 
-  const projectCount = org.projects?.[0]?.count || 0
-  const taskCount = org.tasks?.[0]?.count || 0
-  const members = org.org_memberships || []
+  const projectCount = typedOrg.projects?.[0]?.count || 0
+  const taskCount = typedOrg.tasks?.[0]?.count || 0
+  const members = typedOrg.org_memberships || []
 
   return (
     <div className="space-y-8">
@@ -133,13 +136,13 @@ export default async function AdminOrganizationDetailPage({ params }: PageProps)
           </Link>
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-cyber-blue to-cyber-cyan flex items-center justify-center text-white font-bold text-xl">
-              {org.name.charAt(0)}
+              {typedOrg.name.charAt(0)}
             </div>
             <div>
               <h1 className="text-3xl font-bold font-display tracking-tight">
-                {org.name}
+                {typedOrg.name}
               </h1>
-              <p className="text-muted-foreground">/{org.slug}</p>
+              <p className="text-muted-foreground">/{typedOrg.slug}</p>
             </div>
           </div>
         </div>
@@ -148,10 +151,10 @@ export default async function AdminOrganizationDetailPage({ params }: PageProps)
             variant="outline"
             className={cn(
               'capitalize px-3 py-1',
-              onboardingStatusColors[org.onboarding_status]
+              onboardingStatusColors[typedOrg.onboarding_status]
             )}
           >
-            {org.onboarding_status.replace('_', ' ')}
+            {typedOrg.onboarding_status.replace('_', ' ')}
           </Badge>
           <Button variant="outline" className="gap-2">
             <ExternalLink className="h-4 w-4" />
@@ -179,7 +182,7 @@ export default async function AdminOrganizationDetailPage({ params }: PageProps)
         />
         <StatsCard
           title="Created"
-          value={new Date(org.created_at).toLocaleDateString()}
+          value={new Date(typedOrg.created_at).toLocaleDateString()}
           icon={Clock}
         />
       </div>
@@ -267,22 +270,22 @@ export default async function AdminOrganizationDetailPage({ params }: PageProps)
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="text-sm font-medium">Organization Name</label>
-                  <p className="text-sm text-muted-foreground">{org.name}</p>
+                  <p className="text-sm text-muted-foreground">{typedOrg.name}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">Slug</label>
-                  <p className="text-sm text-muted-foreground">{org.slug}</p>
+                  <p className="text-sm text-muted-foreground">{typedOrg.slug}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">Onboarding Status</label>
                   <p className="text-sm text-muted-foreground capitalize">
-                    {org.onboarding_status.replace('_', ' ')}
+                    {typedOrg.onboarding_status.replace('_', ' ')}
                   </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium">Created</label>
                   <p className="text-sm text-muted-foreground">
-                    {new Date(org.created_at).toLocaleString()}
+                    {new Date(typedOrg.created_at).toLocaleString()}
                   </p>
                 </div>
               </div>
