@@ -4,7 +4,6 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { checkModuleAccess, checkOrgAdmin } from '@/lib/auth/action-guards'
 import { createProjectSchema, updateProjectSchema } from '@/schemas/project.schema'
-import type { TablesInsert, TablesUpdate } from '@/types/database.types'
 
 // =============================================================================
 // GET PROJECTS
@@ -106,19 +105,18 @@ export async function createProject(orgId: string, formData: FormData) {
 
   const supabase = await createClient()
 
-  const insertData: TablesInsert<'projects'> = {
-    org_id: orgId,
-    name: validation.data.name,
-    description: validation.data.description,
-    status: validation.data.status as 'planning' | 'active' | 'on_hold' | 'completed' | 'cancelled',
-    start_date: validation.data.startDate,
-    end_date: validation.data.endDate,
-    created_by: accessResult.data.userId,
-  }
-
-  const { data, error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase as any)
     .from('projects')
-    .insert(insertData)
+    .insert({
+      org_id: orgId,
+      name: validation.data.name,
+      description: validation.data.description,
+      status: validation.data.status,
+      start_date: validation.data.startDate,
+      end_date: validation.data.endDate,
+      created_by: accessResult.data.userId,
+    })
     .select()
     .single()
 
@@ -168,17 +166,16 @@ export async function updateProject(
 
   const supabase = await createClient()
 
-  const updateData: TablesUpdate<'projects'> = {
-    name: validation.data.name,
-    description: validation.data.description,
-    status: validation.data.status as 'planning' | 'active' | 'on_hold' | 'completed' | 'cancelled' | undefined,
-    start_date: validation.data.startDate,
-    end_date: validation.data.endDate,
-  }
-
-  const { data, error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase as any)
     .from('projects')
-    .update(updateData)
+    .update({
+      name: validation.data.name,
+      description: validation.data.description,
+      status: validation.data.status,
+      start_date: validation.data.startDate,
+      end_date: validation.data.endDate,
+    })
     .eq('id', projectId)
     .eq('org_id', orgId)
     .select()

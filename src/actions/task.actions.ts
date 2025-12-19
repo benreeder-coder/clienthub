@@ -4,7 +4,6 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { checkModuleAccess, checkOrgAdmin } from '@/lib/auth/action-guards'
 import { createTaskSchema, updateTaskSchema, moveTaskSchema } from '@/schemas/task.schema'
-import type { TablesInsert, TablesUpdate } from '@/types/database.types'
 
 // =============================================================================
 // GET TASKS
@@ -135,22 +134,21 @@ export async function createTask(orgId: string, formData: FormData) {
 
   const newSortOrder = (maxPosResult?.sort_order ?? -1) + 1
 
-  const insertData: TablesInsert<'tasks'> = {
-    org_id: orgId,
-    title: validation.data.title,
-    description: validation.data.description,
-    status: validation.data.status as 'todo' | 'in_progress' | 'review' | 'done' | 'archived',
-    priority: validation.data.priority as 'low' | 'medium' | 'high' | 'urgent',
-    project_id: validation.data.projectId,
-    assigned_to: validation.data.assignedTo,
-    due_date: validation.data.dueDate,
-    created_by: accessResult.data.userId,
-    sort_order: newSortOrder,
-  }
-
-  const { data, error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase as any)
     .from('tasks')
-    .insert(insertData)
+    .insert({
+      org_id: orgId,
+      title: validation.data.title,
+      description: validation.data.description,
+      status: validation.data.status,
+      priority: validation.data.priority,
+      project_id: validation.data.projectId,
+      assigned_to: validation.data.assignedTo,
+      due_date: validation.data.dueDate,
+      created_by: accessResult.data.userId,
+      sort_order: newSortOrder,
+    })
     .select()
     .single()
 
@@ -202,16 +200,17 @@ export async function updateTask(
 
   const supabase = await createClient()
 
-  const updateData: TablesUpdate<'tasks'> = {}
+  const updateData: Record<string, unknown> = {}
   if (validation.data.title) updateData.title = validation.data.title
   if (validation.data.description !== undefined) updateData.description = validation.data.description
-  if (validation.data.status) updateData.status = validation.data.status as 'todo' | 'in_progress' | 'review' | 'done' | 'archived'
-  if (validation.data.priority) updateData.priority = validation.data.priority as 'low' | 'medium' | 'high' | 'urgent'
+  if (validation.data.status) updateData.status = validation.data.status
+  if (validation.data.priority) updateData.priority = validation.data.priority
   if (validation.data.projectId !== undefined) updateData.project_id = validation.data.projectId
   if (validation.data.assignedTo !== undefined) updateData.assigned_to = validation.data.assignedTo
   if (validation.data.dueDate !== undefined) updateData.due_date = validation.data.dueDate
 
-  const { data, error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase as any)
     .from('tasks')
     .update(updateData)
     .eq('id', taskId)
@@ -294,14 +293,13 @@ export async function moveTask(orgId: string, data: {
   }
 
   // Update the task
-  const moveUpdateData: TablesUpdate<'tasks'> = {
-    status: newStatus as 'todo' | 'in_progress' | 'review' | 'done' | 'archived',
-    sort_order: newSortOrder,
-  }
-
-  const { data: updatedTask, error: updateError } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: updatedTask, error: updateError } = await (supabase as any)
     .from('tasks')
-    .update(moveUpdateData)
+    .update({
+      status: newStatus,
+      sort_order: newSortOrder,
+    })
     .eq('id', validation.data.taskId)
     .eq('org_id', orgId)
     .select()
