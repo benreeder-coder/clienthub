@@ -33,7 +33,8 @@ export default async function AdminOrganizationsPage() {
   const supabase = await createClient()
 
   // Fetch all organizations with member counts and project counts
-  const { data: organizations, error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: organizations, error } = await (supabase as any)
     .from('organizations')
     .select(`
       *,
@@ -52,7 +53,7 @@ export default async function AdminOrganizationsPage() {
     console.error('Error fetching organizations:', error)
   }
 
-  const orgs = organizations || []
+  const orgs = (organizations || []) as any[]
 
   return (
     <div className="space-y-8">
