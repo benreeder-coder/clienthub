@@ -198,7 +198,7 @@ export default async function AdminTemplatesPage() {
                               state === 'hidden' && 'text-muted-foreground'
                             )}
                           >
-                            {mod.name}
+                            {mod.displayName}
                           </span>
                           <StateIcon
                             className={cn('h-3.5 w-3.5', stateColors[state])}
