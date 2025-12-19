@@ -58,7 +58,7 @@ interface KanbanBoardProps {
   onCreateTask?: (status: TaskStatus) => void
 }
 
-const COLUMNS: TaskStatus[] = ['todo', 'in_progress', 'review', 'completed']
+const COLUMNS: TaskStatus[] = ['todo', 'in_progress', 'review', 'done']
 
 const columnConfig: Record<TaskStatus, {
   icon: React.ElementType
@@ -84,13 +84,13 @@ const columnConfig: Record<TaskStatus, {
     bgColor: 'bg-cyber-amber/5',
     borderColor: 'border-cyber-amber/20',
   },
-  completed: {
+  done: {
     icon: CheckCircle2,
     color: 'text-cyber-emerald',
     bgColor: 'bg-cyber-emerald/5',
     borderColor: 'border-cyber-emerald/20',
   },
-  cancelled: {
+  archived: {
     icon: Circle,
     color: 'text-destructive',
     bgColor: 'bg-destructive/5',

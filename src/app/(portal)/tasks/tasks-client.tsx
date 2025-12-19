@@ -159,7 +159,7 @@ export function TasksPageClient({
     todo: tasks.filter((t) => t.status === 'todo').length,
     in_progress: tasks.filter((t) => t.status === 'in_progress').length,
     review: tasks.filter((t) => t.status === 'review').length,
-    completed: tasks.filter((t) => t.status === 'completed').length,
+    done: tasks.filter((t) => t.status === 'done').length,
   }
 
   return (
