@@ -34,10 +34,12 @@ export default async function AdminDashboardPage() {
   const supabase = await createClient()
 
   // Fetch summary data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const typedSupabase = supabase as any
   const [orgsResult, usersResult, tasksResult] = await Promise.all([
-    supabase.from('organizations').select('id, name, slug, onboarding_status', { count: 'exact' }),
-    supabase.from('user_profiles').select('id', { count: 'exact' }),
-    supabase
+    typedSupabase.from('organizations').select('id, name, slug, onboarding_status', { count: 'exact' }),
+    typedSupabase.from('user_profiles').select('id', { count: 'exact' }),
+    typedSupabase
       .from('tasks')
       .select(`
         id,
@@ -54,17 +56,17 @@ export default async function AdminDashboardPage() {
       .limit(20),
   ])
 
-  const organizations = orgsResult.data || []
+  const organizations = (orgsResult.data || []) as any[]
   const totalUsers = usersResult.count || 0
-  const allTasks = tasksResult.data || []
+  const allTasks = (tasksResult.data || []) as any[]
 
   // Tasks assigned to current admin
-  const myTasks = allTasks.filter((t) => t.assigned_to === user.id)
+  const myTasks = allTasks.filter((t: any) => t.assigned_to === user.id)
 
   // Group by due date urgency
   const today = new Date()
   const overdueTasks = allTasks.filter(
-    (t) => t.due_date && new Date(t.due_date) < today
+    (t: any) => t.due_date && new Date(t.due_date) < today
   )
 
   return (
