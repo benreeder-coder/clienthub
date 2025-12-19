@@ -37,6 +37,8 @@ interface Task {
   priority: TaskPriority
   due_date: string | null
   sort_order: number
+  project_id: string | null
+  assigned_to: string | null
   assigned_profile: {
     id: string
     full_name: string | null
