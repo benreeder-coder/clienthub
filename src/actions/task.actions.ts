@@ -123,7 +123,8 @@ export async function createTask(orgId: string, formData: FormData) {
   const supabase = await createClient()
 
   // Get the max sort_order for this status
-  const { data: maxPosResult } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: maxPosResult } = await (supabase as any)
     .from('tasks')
     .select('sort_order')
     .eq('org_id', orgId)
@@ -132,7 +133,7 @@ export async function createTask(orgId: string, formData: FormData) {
     .limit(1)
     .single()
 
-  const newSortOrder = (maxPosResult?.sort_order ?? -1) + 1
+  const newSortOrder = ((maxPosResult as { sort_order: number } | null)?.sort_order ?? -1) + 1
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (supabase as any)
