@@ -108,7 +108,7 @@ export default async function AdminOrganizationDetailPage({ params }: PageProps)
 
     return {
       key: mod.key,
-      name: mod.name,
+      name: mod.displayName,
       icon: mod.icon,
       defaultState: templateDefault?.default_state || 'hidden',
       effectiveState: orgOverride?.state_override || templateDefault?.default_state || 'hidden',
