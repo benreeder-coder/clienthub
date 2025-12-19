@@ -195,7 +195,7 @@ export function TasksPageClient({
           Review: {taskCounts.review}
         </Badge>
         <Badge variant="outline" className="gap-1 border-cyber-emerald/30 text-cyber-emerald">
-          Completed: {taskCounts.completed}
+          Done: {taskCounts.done}
         </Badge>
       </div>
 
