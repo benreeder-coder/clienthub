@@ -309,8 +309,8 @@ function TaskListView({
     todo: 'bg-muted',
     in_progress: 'bg-cyber-blue',
     review: 'bg-cyber-amber',
-    completed: 'bg-cyber-emerald',
-    cancelled: 'bg-destructive',
+    done: 'bg-cyber-emerald',
+    archived: 'bg-destructive',
   }
 
   if (tasks.length === 0) {
