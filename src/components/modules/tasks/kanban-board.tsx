@@ -36,7 +36,7 @@ interface Task {
   status: TaskStatus
   priority: TaskPriority
   due_date: string | null
-  position: number
+  sort_order: number
   assigned_profile: {
     id: string
     full_name: string | null
@@ -120,7 +120,7 @@ export function KanbanBoard({
   const tasksByStatus = COLUMNS.reduce((acc, status) => {
     acc[status] = tasks
       .filter((t) => t.status === status)
-      .sort((a, b) => a.position - b.position)
+      .sort((a, b) => a.sort_order - b.sort_order)
     return acc
   }, {} as Record<TaskStatus, Task[]>)
 
@@ -150,7 +150,7 @@ export function KanbanBoard({
       const targetTasks = tasksByStatus[status]
       const newPosition = targetTasks.length
 
-      if (draggedTask.status !== status || draggedTask.position !== newPosition) {
+      if (draggedTask.status !== status || draggedTask.sort_order !== newPosition) {
         await onMoveTask(draggedTask.id, status, newPosition)
       }
 
