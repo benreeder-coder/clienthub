@@ -254,7 +254,8 @@ export async function moveTask(orgId: string, data: {
   const supabase = await createClient()
 
   // Get current task
-  const { data: currentTask, error: fetchError } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: currentTask, error: fetchError } = await (supabase as any)
     .from('tasks')
     .select('status, sort_order')
     .eq('id', validation.data.taskId)
@@ -265,30 +266,34 @@ export async function moveTask(orgId: string, data: {
     return { error: 'Task not found', code: 'NOT_FOUND' }
   }
 
+  const typedTask = currentTask as { status: string; sort_order: number }
   const newStatus = validation.data.status as 'todo' | 'in_progress' | 'review' | 'done' | 'archived'
   const newSortOrder = validation.data.position ?? 0
 
   // If moving to a different status, reorder both columns
-  if (currentTask.status !== newStatus) {
+  if (typedTask.status !== newStatus) {
     // Decrement positions in old column for items after this task
-    await supabase.rpc('reorder_tasks_after_remove', {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any).rpc('reorder_tasks_after_remove', {
       p_org_id: orgId,
-      p_status: currentTask.status,
-      p_old_position: currentTask.sort_order,
+      p_status: typedTask.status,
+      p_old_position: typedTask.sort_order,
     })
 
     // Increment positions in new column for items at or after new position
-    await supabase.rpc('reorder_tasks_before_insert', {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any).rpc('reorder_tasks_before_insert', {
       p_org_id: orgId,
       p_status: newStatus,
       p_new_position: newSortOrder,
     })
   } else {
     // Same column, just reorder
-    await supabase.rpc('reorder_tasks_same_column', {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any).rpc('reorder_tasks_same_column', {
       p_org_id: orgId,
       p_status: newStatus,
-      p_old_position: currentTask.sort_order,
+      p_old_position: typedTask.sort_order,
       p_new_position: newSortOrder,
     })
   }
